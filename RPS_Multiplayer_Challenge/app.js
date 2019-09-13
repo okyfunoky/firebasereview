@@ -1,4 +1,6 @@
 // Initialize Firebase
+//This config gets consumed when you initize firebase. 
+//You get this when you register a new app.
 var config = {
   apiKey: "AIzaSyAgEuXgOYwmHK_RqpVzMIJDRLD5ZB7UbbQ",
   authDomain: "rps-multi-7fedd.firebaseapp.com",
@@ -6,13 +8,20 @@ var config = {
   storageBucket: "rps-multi-7fedd.appspot.com"
 };
 
+//Allows our code to start running firebase methods.
 firebase.initializeApp(config);
 
+// Sets a local variable to our remote database
 var database = firebase.database();
+// sets a variable for the /chat folder in our db
 var chatData = database.ref("/chat");
+// sets a variable for the players object in our db
 var playersRef = database.ref("players");
+// sets a variable for the turn object in our db
 var currentTurnRef = database.ref("turn");
 var username = "Guest";
+
+//Setting up some variables that we can use later.
 var currentPlayers = null;
 var currentTurn = null;
 var playerNum = false;
@@ -24,6 +33,7 @@ var playerTwoData = null;
 // USERNAME LISTENERS
 // Start button - takes username and tries to get user in game
 $("#start").click(function() {
+  //do this only if the username isn't empty, and then set the username and start the game
   if ($("#username").val() !== "") {
     username = capitalize($("#username").val());
     getInGame();
@@ -40,22 +50,25 @@ $("#username").keypress(function(e) {
 
 // Function to capitalize usernames
 function capitalize(name) {
+  //builds a new string that capitalizes only the first letter of the string provided
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 // CHAT LISTENERS
 // Chat send button listener, grabs input and pushes to firebase. (Firebase's push automatically creates a unique key)
 $("#chat-send").click(function() {
+  //when this value isn't empty
   if ($("#chat-input").val() !== "") {
     var message = $("#chat-input").val();
 
+    //pushes an object to firebase based on the current user values, and their custom message/
     chatData.push({
       name: username,
       message: message,
       time: firebase.database.ServerValue.TIMESTAMP,
       idNum: playerNum
     });
-
+    //clear the input field once the message is sent.
     $("#chat-input").val("");
   }
 });
@@ -113,6 +126,7 @@ chatData.orderByChild("time").on("child_added", function(snapshot) {
 });
 
 // Tracks changes in key which contains player objects
+//Only fires when the playersRef db has a value updated
 playersRef.on("value", function(snapshot) {
   // length of the 'players' array
   currentPlayers = snapshot.numChildren();
