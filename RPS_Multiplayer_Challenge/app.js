@@ -116,6 +116,7 @@ $(document).on("click", "li", function() {
 
 // Update chat on screen when new message detected - ordered by 'time' value
 chatData.orderByChild("time").on("child_added", function(snapshot) {
+  //Adds a paragraph to the chat-messages object with player info and message
   $("#chat-messages").append(
     $("<p>").addClass("player-" + snapshot.val().idNum),
     $("<span>").text(snapshot.val().name + ":" + snapshot.val().message)
@@ -142,6 +143,7 @@ playersRef.on("value", function(snapshot) {
   // If theres a player 1, fill in name and win loss data
   if (playerOneExists) {
     $("#player1-name").text(playerOneData.name);
+    //Score counts
     $("#player1-wins").text("Wins: " + playerOneData.wins);
     $("#player1-losses").text("Losses: " + playerOneData.losses);
   } else {
@@ -154,6 +156,7 @@ playersRef.on("value", function(snapshot) {
   // If theres a player 2, fill in name and win/loss data
   if (playerTwoExists) {
     $("#player2-name").text(playerTwoData.name);
+    //score counts
     $("#player2-wins").text("Wins: " + playerTwoData.wins);
     $("#player2-losses").text("Losses: " + playerTwoData.losses);
   } else {
@@ -224,6 +227,8 @@ currentTurnRef.on("value", function(snapshot) {
       //  if (playerNum) {
       //    $("#player" + playerNum + " ul").empty();
       //  }
+
+      //clears the data to wait for a game
       $("#player1 ul").empty();
       $("#player2 ul").empty();
       $("#current-turn").html("<h2>Waiting for another player to join.</h2>");
@@ -295,6 +300,7 @@ function getInGame() {
 // Game logic - Tried to space this out and make it more readable. Displays who won, lost, or tie game in result div.
 // Increments wins or losses accordingly.
 function gameLogic(player1choice, player2choice) {
+  //call when player one wins - sets data based on this condition
   var playerOneWon = function() {
     $("#result h2").text(playerOneData.name + " Wins!");
     if (playerNum === 1) {
@@ -308,7 +314,7 @@ function gameLogic(player1choice, player2choice) {
         .set(playerTwoData.losses + 1);
     }
   };
-
+//call when player two wins - sets data based on this condition
   var playerTwoWon = function() {
     $("#result h2").text(playerTwoData.name + " Wins!");
     if (playerNum === 2) {
@@ -322,7 +328,7 @@ function gameLogic(player1choice, player2choice) {
         .set(playerOneData.losses + 1);
     }
   };
-
+  //Run on tie, checks for equivalence of answers, could probably be refactored
   var tie = function() {
     $("#result h2").text("Tie Game!");
   };
